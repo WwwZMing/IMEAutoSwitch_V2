@@ -49,8 +49,8 @@ SetTimer_ResetshellMessageFlag(){ ;窗口切换标志
     ; 定时重置未在接收切换消息
     shellMessageFlag := 0
 } 
-
-Shell_KBLSwitch(){ ; 根据激活窗口切换输入法
+; 根据激活窗口切换输入法
+Shell_KBLSwitch(){ 
     Critical("On")
     If WinActive("ahk_group en_ahk_group"){ ;窗口组切换英文输入法
         setKBLlLayout(AutoSwitchMap["en"],1)
@@ -60,7 +60,8 @@ Shell_KBLSwitch(){ ; 根据激活窗口切换输入法
     }
     Critical("off")
 }
-shellMessage(wParam, lParam,*) { ; 接受系统窗口回调消息切换输入法, 第一次是实时，第二次是保障
+; 接受系统窗口回调消息切换输入法, 第一次是实时，第二次是保障
+shellMessage(wParam, lParam,*) {
     If ( wParam=1 || wParam=32772 || wParam=5 || wParam=4) {
         shellMessageFlag := 1
         timer := SetTimer_ResetshellMessageFlag.Bind()
@@ -97,8 +98,8 @@ setIME(setSts, win_id:="") {
     MsgReply := SendMessage(0x283, 0x006, setSts, , win_id)
     Return MsgReply
 }
-
-getIMEwinid() { ; 获取激活窗口IME线程id
+; 获取激活窗口IME线程id
+getIMEwinid() { 
     If WinActive("ahk_group focus_control_ahk_group"){
         FocusedHwnd := ControlGetFocus("A")
         CClassNN := ControlGetClassNN(FocusedHwnd)
@@ -112,8 +113,8 @@ getIMEwinid() { ; 获取激活窗口IME线程id
     IMEwin_id := DllCall(ImmGetDefaultIMEWnd, "Uint", win_id, "Uint")
     Return IMEwin_id
 }
-
-getIMEKBL(win_id:="") { ; 获取激活窗口键盘布局
+; 获取激活窗口键盘布局
+getIMEKBL(win_id:="") { 
     thread_id := DllCall("GetWindowThreadProcessId", "UInt", win_id, "UInt", 0)
     IME_State := DllCall("GetKeyboardLayout", "UInt", thread_id)
     Switch IME_State
@@ -126,7 +127,7 @@ getIMEKBL(win_id:="") { ; 获取激活窗口键盘布局
 
 
 ;获取Win32 API消息
-Receive_WM_COPYDATA(&wParam,&lParam) { ; 接收消息
+Receive_WM_COPYDATA(&wParam,&lParam) {
     StringAddress := NumGet(lParam, 2*A_PtrSize, "Ptr")  ; 获取 CopyDataStruct 的 lpData 成员.
     CopyOfData := StrGet(StringAddress)  ; 从结构中复制字符串.
     return true  ; 返回 1(true) 是回复此消息的传统方式.
