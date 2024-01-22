@@ -90,13 +90,17 @@ setKBLlLayout(KBL:=0,Source:=0) {
 }
 ; 设置输入法状态-获取状态-末位设置
 setIME(setSts, win_id:="") {
-    MsgReply := SendMessage(0x283, 0x001, 0, , win_id)
-    CONVERSIONMODE := 2046&MsgReply
-    CONVERSIONMODE += setSts
-    Sleep(800) ; 我也不知道什么原理，估计是IME内部要自动切换到上次的状态，所以你必须再次更新覆盖状态，这个值你可以自行修改，越大成功率越高（切换也就越慢
-    MsgReply := SendMessage(0x283, 0x002, CONVERSIONMODE, , win_id)
-    MsgReply := SendMessage(0x283, 0x006, setSts, , win_id)
-    Return MsgReply
+    try {
+        MsgReply := SendMessage(0x283, 0x001, 0, , win_id)
+        CONVERSIONMODE := 2046&MsgReply
+        CONVERSIONMODE += setSts
+        Sleep(800) ; 我也不知道什么原理，估计是IME内部要自动切换到上次的状态，所以你必须再次更新覆盖状态，总之改变就是好事
+        MsgReply := SendMessage(0x283, 0x002, CONVERSIONMODE, , win_id)
+        MsgReply := SendMessage(0x283, 0x006, setSts, , win_id)
+        return MsgReply
+    } catch TargetError as e {
+        return 0 ;未知原因导致检测不到窗口，非常奇怪的bug
+    }
 }
 ; 获取激活窗口IME线程id
 getIMEwinid() { 
