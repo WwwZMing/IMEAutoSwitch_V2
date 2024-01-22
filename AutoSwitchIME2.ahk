@@ -93,7 +93,7 @@ setIME(setSts, win_id:="") {
     MsgReply := SendMessage(0x283, 0x001, 0, , win_id)
     CONVERSIONMODE := 2046&MsgReply
     CONVERSIONMODE += setSts
-    Sleep(50) ; 我也不知道什么原理，估计是IME内部要自动切换到上次的状态，所以你必须再次更新覆盖状态，总之改变就是好事
+    Sleep(800) ; 我也不知道什么原理，估计是IME内部要自动切换到上次的状态，所以你必须再次更新覆盖状态，这个值你可以自行修改，越大成功率越高（切换也就越慢
     MsgReply := SendMessage(0x283, 0x002, CONVERSIONMODE, , win_id)
     MsgReply := SendMessage(0x283, 0x006, setSts, , win_id)
     Return MsgReply
